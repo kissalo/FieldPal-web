@@ -409,36 +409,36 @@ Time-slots
 ### 🏠 Homepage
 
 <p align="center">
-  <img src="<img width="1030" height="603" alt="image" src="https://github.com/user-attachments/assets/c97d0077-961f-4a08-abc2-15471d991fcf" />
-" />
+ <img width="1030" height="603" alt="image" src="https://github.com/user-attachments/assets/c97d0077-961f-4a08-abc2-15471d991fcf" />
+
 </p>
 
 ### 🔐 Login
 
 <p align="center">
-  <img src="<img width="966" height="503" alt="image" src="https://github.com/user-attachments/assets/6ba28111-d1f1-45ce-a64d-48b42c393c55" />
-" />
+  <img width="966" height="503" alt="image" src="https://github.com/user-attachments/assets/6ba28111-d1f1-45ce-a64d-48b42c393c55" />
+
 </p>
 
 ### 🏢 Administrator Dashboard
 
 <p align="center">
-  <img src="<img width="1122" height="650" alt="image" src="https://github.com/user-attachments/assets/449144db-b01a-4a71-a5ab-de2c9d016d64" />
-" />
+  <img width="1122" height="650" alt="image" src="https://github.com/user-attachments/assets/449144db-b01a-4a71-a5ab-de2c9d016d64" />
+
 </p>
 
 ### 🏟️ Court Configuration
 
 <p align="center">
-  <img src="<img width="1126" height="646" alt="image" src="https://github.com/user-attachments/assets/77c9ed28-4199-4e08-8a88-3bd4f51e9169" />
-" />
+ <img width="1126" height="646" alt="image" src="https://github.com/user-attachments/assets/77c9ed28-4199-4e08-8a88-3bd4f51e9169" />
+
 </p>
 
 ### 📅 Reservation
 
 <p align="center">
-  <img src="<img width="1112" height="642" alt="image" src="https://github.com/user-attachments/assets/76b6b500-7017-42e8-93ab-78dc852833ad" />
-" />
+ <img width="1112" height="642" alt="image" src="https://github.com/user-attachments/assets/76b6b500-7017-42e8-93ab-78dc852833ad" />
+
 </p>
 
 
