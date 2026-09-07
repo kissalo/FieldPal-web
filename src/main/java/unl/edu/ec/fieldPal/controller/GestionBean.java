@@ -16,6 +16,7 @@ import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import unl.edu.ec.fieldPal.faces.FacesUtil;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -127,8 +128,7 @@ public class GestionBean implements Serializable {
         organizationService.addOrganization(org);
 
         clearOrgForm();
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_INFO, "Organización registrada exitosamente.", ""));
+        FacesUtil.addSuccessMessage("Organización registrada exitosamente.");
         return null;
     }
 
@@ -142,16 +142,14 @@ public class GestionBean implements Serializable {
             organizationService.updateOrganization(editingOrg);
             showEditOrgModal = false;
             editingOrg = null;
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Organización actualizada.", ""));
+            FacesUtil.addSuccessMessage("Organización actualizada.");
         }
         return null;
     }
 
     public void removeOrganization(Organization org) {
         organizationService.removeOrganization(org);
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_INFO, "Organización eliminada.", ""));
+        FacesUtil.addSuccessMessage("Organización eliminada.");
     }
 
     // === Canchas ===
@@ -162,8 +160,7 @@ public class GestionBean implements Serializable {
 
     public String doAddCourt() {
         if (newCourtOrg == null) {
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Selecciona una organización.", ""));
+            FacesUtil.addErrorMessage("Selecciona una organización.");
             return null;
         }
         Court court = new Court();
@@ -178,8 +175,7 @@ public class GestionBean implements Serializable {
         courtService.addCourt(court);
 
         clearCourtForm();
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_INFO, "Cancha registrada exitosamente.", ""));
+        FacesUtil.addSuccessMessage("Cancha registrada exitosamente.");
         return null;
     }
 
@@ -193,16 +189,14 @@ public class GestionBean implements Serializable {
             courtService.updateCourt(editingCourt);
             showEditCourtModal = false;
             editingCourt = null;
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Cancha actualizada.", ""));
+            FacesUtil.addSuccessMessage("Cancha actualizada.");
         }
         return null;
     }
 
     public void removeCourt(Long courtId) {
         courtService.removeCourt(courtId);
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_INFO, "Cancha eliminada.", ""));
+        FacesUtil.addSuccessMessage("Cancha eliminada.");
     }
 
     // === Reservas ===
@@ -221,8 +215,7 @@ public class GestionBean implements Serializable {
 
     public void cancelReservation(Long reservationId) {
         reservationService.cancelReservation(reservationId);
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_INFO, "Reserva cancelada.", ""));
+        FacesUtil.addSuccessMessage("Reserva cancelada.");
     }
 
     // === Helpers ===

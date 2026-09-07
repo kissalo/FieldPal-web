@@ -1,7 +1,5 @@
 package unl.edu.ec.fieldPal.controller;
 
-import jakarta.faces.application.FacesMessage;
-import jakarta.faces.context.FacesContext;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -11,6 +9,7 @@ import unl.edu.ec.fieldPal.business.service.UserService;
 import unl.edu.ec.fieldPal.exception.AlreadyEntityException;
 import unl.edu.ec.fieldPal.exception.CredentialInvalidException;
 import unl.edu.ec.fieldPal.exception.EncryptorException;
+import unl.edu.ec.fieldPal.faces.FacesUtil;
 import unl.edu.ec.fieldPal.util.security.EncryptorManager;
 
 import java.io.Serial;
@@ -146,8 +145,7 @@ public class AuthBean implements Serializable {
     private void loginSuccess(User user, String welcomeMessage) {
         currentUser = user;
         organizationId = user.isAdmin() ? user.getOrganizationId() : null;
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_INFO, welcomeMessage, ""));
+        FacesUtil.addSuccessMessageAndKeep(welcomeMessage);
     }
 
     private void decryptPassword(User user) {
@@ -164,8 +162,7 @@ public class AuthBean implements Serializable {
     }
 
     private void addError(String detail) {
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_ERROR, detail, ""));
+        FacesUtil.addErrorMessage(detail);
     }
 
     private static boolean isBlank(String s) {

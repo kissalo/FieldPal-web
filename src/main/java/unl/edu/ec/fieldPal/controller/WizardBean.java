@@ -1,8 +1,6 @@
 package unl.edu.ec.fieldPal.controller;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.faces.application.FacesMessage;
-import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -14,8 +12,7 @@ import unl.edu.ec.fieldPal.domain.User;
 import unl.edu.ec.fieldPal.business.service.OrganizationService;
 import unl.edu.ec.fieldPal.business.service.CourtService;
 import unl.edu.ec.fieldPal.business.service.UserService;
-import unl.edu.ec.fieldPal.exception.AlreadyEntityException;
-import unl.edu.ec.fieldPal.exception.EncryptorException;
+import unl.edu.ec.fieldPal.faces.FacesUtil;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -192,9 +189,7 @@ public class WizardBean implements Serializable {
 
             tempCourts.add(currentCourt);
 
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_INFO,
-                            "Cancha '" + currentCourt.getName() + "' añadida exitosamente.", null));
+            FacesUtil.addSuccessMessage("Cancha '" + currentCourt.getName() + "' añadida exitosamente.");
 
             prepareNewCourt();
         } else {
@@ -204,9 +199,7 @@ public class WizardBean implements Serializable {
 
     public void removeTempCourt(Court court) {
         if (tempCourts.remove(court)) {
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_WARN,
-                            "La cancha '" + court.getName() + "' ha sido quitada.", null));
+            FacesUtil.addWarnMessage(null, "La cancha '" + court.getName() + "' ha sido quitada.");
         }
     }
 
@@ -230,7 +223,7 @@ public class WizardBean implements Serializable {
             User currentUser = authBean.getCurrentUser();
             if (currentUser != null) {
                 currentUser.setOrganizationId(newOrganization.getId());
-                userService.updateUser(currentUser, null); // null: no se cambia contraseña aquí
+                userService.updateUser(currentUser);
             }
 
             // 2. Asociar y guardar canchas
@@ -239,22 +232,15 @@ public class WizardBean implements Serializable {
                 courtService.save(court);
             }
 
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_INFO,
-                            "¡Excelente!", editMode
-                            ? "Los cambios de '" + newOrganization.getName() + "' se guardaron exitosamente."
-                            : "El complejo '" + newOrganization.getName() + "' ha sido publicado exitosamente."));
-
-            FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
+            // Hay faces-redirect=true hacia gestion.xhtml -> usamos "AndKeep",
+            // que ya incluye internamente el setKeepMessages(true) que antes
+            // se llamaba a mano en la línea de abajo.
+            FacesUtil.addSuccessMessageAndKeep("¡Excelente!", editMode
+                    ? "Los cambios de '" + newOrganization.getName() + "' se guardaron exitosamente."
+                    : "El complejo '" + newOrganization.getName() + "' ha sido publicado exitosamente.");
 
             return "/admin/gestion.xhtml?faces-redirect=true";
 
-        } catch (AlreadyEntityException e) {
-            showError("Conflicto de Datos", "Ya existe otro usuario con ese nombre. No se pudo vincular la organización.");
-            return null;
-        } catch (EncryptorException e) {
-            showError("Error de Seguridad", "Ocurrió un problema al procesar los datos del usuario administrador.");
-            return null;
         } catch (Exception e) {
             showError("Error de Persistencia", "No se pudo guardar la información: " + e.getMessage());
             return null;
@@ -262,8 +248,7 @@ public class WizardBean implements Serializable {
     }
 
     private void showError(String summary, String detail) {
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_ERROR, summary, detail));
+        FacesUtil.addErrorMessage(summary, detail);
     }
 
     public Zone[] getZones() { return Zone.values(); }

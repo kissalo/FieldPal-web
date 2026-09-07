@@ -6,11 +6,10 @@ import unl.edu.ec.fieldPal.domain.Reservation;
 import unl.edu.ec.fieldPal.business.service.CourtService;
 import unl.edu.ec.fieldPal.business.service.OrganizationService;
 import unl.edu.ec.fieldPal.business.service.ReservationService;
-import jakarta.faces.application.FacesMessage;
-import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import unl.edu.ec.fieldPal.faces.FacesUtil;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -99,15 +98,13 @@ public class MisReservasBean implements Serializable {
     public void cancelReservation(Long reservationId) {
         if (reservationId == null) return;
         reservationService.cancelReservation(reservationId);
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_INFO, "Reserva cancelada exitosamente.", ""));
+        FacesUtil.addSuccessMessage("Reserva cancelada exitosamente.");
     }
 
     public void confirmAttendance(Long reservationId) {
         if (reservationId == null) return;
         reservationService.confirmReservation(reservationId);
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_INFO, "Asistencia confirmada.", ""));
+        FacesUtil.addSuccessMessage("Asistencia confirmada.");
     }
 
     // === Modal de detalle / edición ===
@@ -127,8 +124,7 @@ public class MisReservasBean implements Serializable {
         if (selectedReservation == null) return;
         reservationService.updateReservation(selectedReservation);
         showEditModal = false;
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_INFO, "Reserva actualizada correctamente.", ""));
+        FacesUtil.addSuccessMessage("Reserva actualizada correctamente.");
     }
 
     /** Cancelar desde el modal: cancela y cierra en un solo paso. */

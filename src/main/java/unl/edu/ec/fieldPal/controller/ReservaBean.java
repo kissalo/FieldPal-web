@@ -7,12 +7,11 @@ import unl.edu.ec.fieldPal.domain.TimeSlot;
 import unl.edu.ec.fieldPal.domain.enums.ReservationStatus;
 import unl.edu.ec.fieldPal.business.service.CourtService;
 import unl.edu.ec.fieldPal.business.service.ReservationService;
-import jakarta.faces.application.FacesMessage;
-import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import unl.edu.ec.fieldPal.business.service.ScheduleService;
+import unl.edu.ec.fieldPal.faces.FacesUtil;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -110,45 +109,38 @@ public class ReservaBean implements Serializable {
 
     public String doReserve() {
         if (!authBean.isAuthenticated()) {
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Debes iniciar sesión para reservar.", ""));
+            // Hay faces-redirect=true hacia login.xhtml -> usamos "AndKeep"
+            // para que el mensaje sobreviva al cambio de vista.
+            FacesUtil.addErrorMessageAndKeep("Debes iniciar sesión para reservar.");
             return "/login.xhtml?faces-redirect=true";
         }
 
         // Validaciones básicas
         if (!getAvailableHours().contains(hour)) {
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                            "La hora seleccionada ya no está disponible.", ""));
+            FacesUtil.addErrorMessage("La hora seleccionada ya no está disponible.");
             return null;
         }
         if (selectedCourtId == null) {
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Selecciona una cancha.", ""));
+            FacesUtil.addErrorMessage("Selecciona una cancha.");
             return null;
         }
         if (date == null) {
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Selecciona una fecha.", ""));
+            FacesUtil.addErrorMessage("Selecciona una fecha.");
             return null;
         }
         if (hour == null) {
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Selecciona una hora.", ""));
+            FacesUtil.addErrorMessage("Selecciona una hora.");
             return null;
         }
 
         if (!getAvailableHours().contains(hour)) {
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                            "La hora seleccionada ya no está disponible.", ""));
+            FacesUtil.addErrorMessage("La hora seleccionada ya no está disponible.");
             return null;
         }
 
         Court court = getActiveCourt();
         if (court == null) {
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Cancha no encontrada.", ""));
+            FacesUtil.addErrorMessage("Cancha no encontrada.");
             return null;
         }
 
@@ -170,10 +162,10 @@ public class ReservaBean implements Serializable {
         scheduleService.reserve(selectedCourtId, date, hour);
         submitted = true;
 
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_INFO,
-                        "¡Reserva confirmada! Cancha: " + court.getName() +
-                                " | Fecha: " + date + " " + hour, ""));
+        // Hay faces-redirect=true hacia mis-reservas.xhtml -> "AndKeep"
+        FacesUtil.addSuccessMessageAndKeep(
+                "¡Reserva confirmada! Cancha: " + court.getName() +
+                        " | Fecha: " + date + " " + hour);
 
         return "/mis-reservas.xhtml?faces-redirect=true";
     }
