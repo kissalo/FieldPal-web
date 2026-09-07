@@ -12,7 +12,7 @@ services:
       - ${DB_PGSQL_PORT_PUBLIC}:5432
     volumes:
       - fieldpal-pg-data:/var/lib/postgresql
-      # - ./init_db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      #- ./src/main/resources/db/initial-data.sql:/docker-entrypoint-initdb.d/initial-data.sql
     networks:
       - fieldpal-network
     healthcheck:

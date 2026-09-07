@@ -11,7 +11,7 @@
         <properties>
             <!-- 1. Configuración de generación / actualización de tablas (esquema de BD) -->
             <!-- Configuración de Jakarta persistence puede ser: none, create, drop-and-create, drop -->
-            <property name="jakarta.persistence.schema-generation.database.action" value="drop-and-create"/>
+            <property name="jakarta.persistence.schema-generation.database.action" value="none"/>
 
             <!-- Configuración de EclipseLink values: none, drop-and-create-tables, create-tables, create-or-extend-tables -->
             <!--property name="eclipselink.ddl-generation" value="create-or-extend-tables"/-->

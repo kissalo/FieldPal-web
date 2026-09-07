@@ -1,5 +1,4 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:h="jakarta.faces.html"
                 xmlns:f="jakarta.faces.core"
                 xmlns:ui="jakarta.faces.facelets"
                 xmlns:p="primefaces">
@@ -52,6 +51,7 @@
 
             <div class="fp-flex fp-gap-2 fp-mt-4" style="margin-top: 15px;">
                 <p:commandButton value="Guardar Cambios" action="#{profileBean.doUpdateProfile}"
+                                 process="@this profileDialog"
                                  update="modalMsgs appForm" styleClass="fp-btn fp-btn-primary"
                                  oncomplete="if (!args.validationFailed) PF('profileModal').hide()" />
 

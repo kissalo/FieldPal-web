@@ -39,7 +39,7 @@
     <variable name="db.pwd" defaultValue="fieldpalUser2626"  envVarName="BD_PWD"/>
 
     <library id="postgresLib">
-        <fileset dir="${shared.resource.dir}/postgres/" include="postgresql-*.jar"/>
+        <fileset dir="${shared.resource.dir}/postgres/" includes="postgresql-*.jar"/>
     </library>
 
     <dataSource id="fieldPalDS"

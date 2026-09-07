@@ -55,16 +55,19 @@ public class UserService {
         throw new AlreadyEntityException("Ya existe otro usuario con ese nombre");
     }
 
-    public void updateUser(User user) throws EncryptorException, AlreadyEntityException {
-        String pwdEncrypted = EncryptorManager.encrypt(user.getPassword());
-        user.setPassword(pwdEncrypted);
-        // Regla Negocio => El nombre de usuario debe ser unico
+    public void updateUser(User user, String rawNewPassword) throws EncryptorException, AlreadyEntityException {
+        if (rawNewPassword != null && !rawNewPassword.isEmpty()) {
+            String pwdEncrypted = EncryptorManager.encrypt(rawNewPassword);
+            user.setPassword(pwdEncrypted);
+        }
+        // Regla Negocio => El nombre de usuario debe ser único
         try {
             User userFound = userRepository.find(user.getName());
             if (!userFound.getId().equals(user.getId())) {
                 throw new AlreadyEntityException("Ya existe otro usuario con ese nombre");
             }
         } catch (EntityNotFoundException e) {
+            // No hay conflicto, se puede continuar
         }
         userRepository.save(user);
     }

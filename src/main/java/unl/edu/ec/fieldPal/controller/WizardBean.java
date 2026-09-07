@@ -14,6 +14,8 @@ import unl.edu.ec.fieldPal.domain.User;
 import unl.edu.ec.fieldPal.business.service.OrganizationService;
 import unl.edu.ec.fieldPal.business.service.CourtService;
 import unl.edu.ec.fieldPal.business.service.UserService;
+import unl.edu.ec.fieldPal.exception.AlreadyEntityException;
+import unl.edu.ec.fieldPal.exception.EncryptorException;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -228,7 +230,7 @@ public class WizardBean implements Serializable {
             User currentUser = authBean.getCurrentUser();
             if (currentUser != null) {
                 currentUser.setOrganizationId(newOrganization.getId());
-                userService.updateUser(currentUser);
+                userService.updateUser(currentUser, null); // null: no se cambia contraseña aquí
             }
 
             // 2. Asociar y guardar canchas
@@ -247,6 +249,12 @@ public class WizardBean implements Serializable {
 
             return "/admin/gestion.xhtml?faces-redirect=true";
 
+        } catch (AlreadyEntityException e) {
+            showError("Conflicto de Datos", "Ya existe otro usuario con ese nombre. No se pudo vincular la organización.");
+            return null;
+        } catch (EncryptorException e) {
+            showError("Error de Seguridad", "Ocurrió un problema al procesar los datos del usuario administrador.");
+            return null;
         } catch (Exception e) {
             showError("Error de Persistencia", "No se pudo guardar la información: " + e.getMessage());
             return null;
