@@ -223,7 +223,7 @@ public class WizardBean implements Serializable {
             User currentUser = authBean.getCurrentUser();
             if (currentUser != null) {
                 currentUser.setOrganizationId(newOrganization.getId());
-                userService.updateUser(currentUser);
+                userService.updateUser(currentUser, currentUser.getPassword());
             }
 
             // 2. Asociar y guardar canchas

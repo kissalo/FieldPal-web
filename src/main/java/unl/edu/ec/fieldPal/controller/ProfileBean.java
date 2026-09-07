@@ -58,7 +58,7 @@ public class ProfileBean implements Serializable {
             }
 
             // Persistencia en el servicio
-            userService.updateUser(editingUser);
+            userService.updateUser(editingUser, newPassword);
 
             // Sincronizar sesión actual para actualizar el Header
             authBean.setCurrentUser(editingUser);
