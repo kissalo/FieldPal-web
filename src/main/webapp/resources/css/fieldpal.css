@@ -5,6 +5,7 @@
 
 /* ── CSS CUSTOM PROPERTIES (LIGHT MODE DEFAULT) ── */
 :root {
+    color-scheme: light;
     --fp-bg: #FFFFFF;
     --fp-bg-card: #FFFFFF;
     --fp-bg-elevated: #F8FAF6;
@@ -16,9 +17,9 @@
     --fp-accent: #ffffff;
     --fp-accent-hover: #ffffff;
     --fp-accent-text: #1B5E3B;
-    --fp-text: #111827;
-    --fp-text-secondary: #90969f;
-    --fp-text-muted: #9CA3AF;
+    --fp-text: #0a0a0a;
+    --fp-text-secondary: #5a5b60;
+    --fp-text-muted: #3c3c41;
     --fp-border: #E5E7EB;
     --fp-border-light: #F3F4F6;
     --fp-success: #22C55E;
@@ -31,8 +32,9 @@
 
 /* ── DARK MODE ── */
 body:has(#fpDarkToggle:checked) {
+    color-scheme: dark;
     --fp-bg: #0A0A0A;
-    --fp-bg-card: #141414;
+    --fp-bg-card: #282828;
     --fp-bg-elevated: #1A1A1A;
     --fp-bg-hover: #222222;
     --fp-primary: #677928;
@@ -45,7 +47,7 @@ body:has(#fpDarkToggle:checked) {
     --fp-text: #F3F4F6;
     --fp-text-secondary: #9CA3AF;
     --fp-text-muted: #6B7280;
-    --fp-border: #262626;
+    --fp-border: #3a3939;
     --fp-border-light: #1F1F1F;
     --fp-success: #4ADE80;
     --fp-error: #F87171;
@@ -218,7 +220,7 @@ body:has(#fpDarkToggle:checked) .fp-chip-active, body:has(#fpDarkToggle:checked)
 /* ═══ FORMS ═══ */
 .fp-input {
     width: 100%; padding: 0.625rem 1rem; border-radius: 0.75rem;
-    border: 1px solid var(--fp-border); background: var(--fp-bg-card);
+    border: 1px solid var(--fp-border); background: var(--fp-bg-card) !important;
     color: var(--fp-text); font-family: 'DM Sans', sans-serif;
     font-size: 0.875rem; transition: all 0.3s; outline: none;
 }
