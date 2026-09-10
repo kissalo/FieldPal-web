@@ -59,81 +59,86 @@
         </div>
 
         <!-- ═══ EXPLORAR POR ZONA ═══ -->
-        <div class="fp-section" style="padding-bottom:2rem;">
-            <div class="fp-text-center fp-mb-8">
-                <div class="fp-eyebrow" style="justify-content:center;">
-                    <span class="material-symbols-outlined" style="font-size:1rem;">location_on</span>
-                    Zonas de Loja
+
+        <div style="max-width:80rem;margin:0 auto;padding:0 1rem 5rem;">
+            <div class="fp-section" style="padding-bottom:2rem;">
+                <div class="fp-text-center fp-mb-8">
+                    <div class="fp-eyebrow" style="justify-content:center;">
+                        <span class="material-symbols-outlined" style="font-size:1rem;">location_on</span>
+                        Zonas de Loja
+                    </div>
+                    <h2 class="fp-section-title" style="justify-content:center;">Explora Canchas por Zona</h2>
+                    <p class="fp-section-subtitle" style="justify-content:center;">Filtra las organizaciones deportivas disponibles según el sector de la ciudad que más te convenga.</p>
                 </div>
-                <h2 class="fp-section-title">Explora Canchas por Zona</h2>
-                <p class="fp-section-subtitle">Filtra las organizaciones deportivas disponibles según el sector de la ciudad que más te convenga.</p>
-            </div>
 
-            <div class="fp-zone-filters" style="justify-content:center;">
-                <p:commandLink styleClass="fp-chip #{homeBean.selectedZone == null ? 'fp-chip-active' : ''}"
-                               action="#{homeBean.clearZoneFilter()}"
-                               process="@this"
-                               update="orgGrid">
-                    Todas las Zonas
-                </p:commandLink>
-
-                <ui:repeat value="#{homeBean.availableZones}" var="zone">
-                    <p:commandLink styleClass="fp-chip #{homeBean.selectedZone == zone ? 'fp-chip-active' : ''}"
-                                   action="#{homeBean.filterByZone(zone)}"
+                <div class="fp-zone-filters" style="justify-content:center;">
+                    <p:commandLink styleClass="fp-chip #{homeBean.selectedZone == null ? 'fp-chip-active' : ''}"
+                                   action="#{homeBean.clearZoneFilter()}"
                                    process="@this"
                                    update="orgGrid">
-                        #{zone.emoji} #{zone.label}
+                        Todas las Zonas
                     </p:commandLink>
-                </ui:repeat>
-            </div>
 
-            <h:panelGroup id="orgGrid" layout="block">
-
-                <h:panelGroup rendered="#{empty homeBean.organizations}" layout="block" styleClass="fp-text-center" style="padding:3rem 0;">
-                    <span class="material-symbols-outlined" style="font-size:3.5rem;color:var(--fp-text-muted);opacity:.2;">location_off</span>
-                    <p style="color:var(--fp-text-muted);margin-top:.75rem;">No hay organizaciones registradas en esta zona.</p>
-                </h:panelGroup>
-
-                <div class="fp-org-grid">
-                    <ui:repeat value="#{homeBean.organizations}" var="org">
-                        <h:link outcome="/horarios" styleClass="fp-org-card">
-                            <f:param name="orgId" value="#{org.id}" />
-
-                            <div class="fp-zone-card-header fp-zone-#{fn:toLowerCase(org.zone)}">
-                                <h4>#{org.name}</h4>
-                                <span class="fp-org-rating">
-                                    <span class="material-symbols-outlined">star</span> #{org.rating}
-                                </span>
-                            </div>
-                            <div class="fp-org-card-body">
-                                <p><span class="material-symbols-outlined">location_on</span> #{org.address}</p>
-                                <p><span class="material-symbols-outlined">stadium</span> #{org.courtCount} canchas</p>
-                            </div>
-                        </h:link>
+                    <ui:repeat value="#{homeBean.availableZones}" var="zone">
+                        <p:commandLink styleClass="fp-chip #{homeBean.selectedZone == zone ? 'fp-chip-active' : ''}"
+                                       action="#{homeBean.filterByZone(zone)}"
+                                       process="@this"
+                                       update="orgGrid">
+                            #{zone.emoji} #{zone.label}
+                        </p:commandLink>
                     </ui:repeat>
                 </div>
-            </h:panelGroup>
+
+                <h:panelGroup id="orgGrid" layout="block">
+
+                    <h:panelGroup rendered="#{empty homeBean.organizations}" layout="block" styleClass="fp-text-center" style="padding:3rem 0;">
+                        <span class="material-symbols-outlined" style="font-size:3.5rem;color:var(--fp-text-muted);opacity:.2;">location_off</span>
+                        <p style="color:var(--fp-text-muted);margin-top:.75rem;">No hay organizaciones registradas en esta zona.</p>
+                    </h:panelGroup>
+
+                    <div class="fp-org-grid">
+                        <ui:repeat value="#{homeBean.organizations}" var="org">
+                            <h:link outcome="/horarios" styleClass="fp-org-card">
+                                <f:param name="orgId" value="#{org.id}" />
+
+                                <div class="fp-zone-card-header fp-zone-#{fn:toLowerCase(org.zone)}">
+                                    <h4>#{org.name}</h4>
+                                    <span class="fp-org-rating">
+                                        <span class="material-symbols-outlined">star</span> #{org.rating}
+                                    </span>
+                                </div>
+                                <div class="fp-org-card-body">
+                                    <p><span class="material-symbols-outlined">location_on</span> #{org.address}</p>
+                                    <p><span class="material-symbols-outlined">stadium</span> #{org.courtCount} canchas</p>
+                                </div>
+                            </h:link>
+                        </ui:repeat>
+                    </div>
+                </h:panelGroup>
+            </div>
         </div>
 
         <!-- ═══ POR QUÉ FIELDPAL ═══ -->
-        <div class="fp-section" style="padding-top:0;">
-            <div class="fp-grid fp-grid-3">
-                <div class="fp-card fp-card-padded fp-text-center">
-                    <i class="pi pi-bolt" style="font-size:2.5rem;color:var(--fp-primary-text);margin-bottom:.75rem;display:block;"></i>
-                    <h5 style="font-family:'DM Sans',sans-serif;font-weight:700;font-size:1.1rem;margin-bottom:.5rem;">Reservas al Instante</h5>
-                    <p class="fp-text-sm" style="color:var(--fp-text-secondary);">Olvídate de las llamadas telefónicas. Agenda tu partido en segundos.</p>
-                </div>
+        <div style="max-width:40rem;margin:0 auto;padding:0 1rem 5rem;">
+            <div class="fp-section" style="padding-top:0;">
+                <div class="fp-grid fp-grid-3">
+                    <div class="fp-card fp-card-padded fp-text-center">
+                        <i class="pi pi-bolt" style="font-size:2.5rem;color:var(--fp-primary-text);margin-bottom:.75rem;display:block;"></i>
+                        <h5 style="font-family:'DM Sans',sans-serif;font-weight:700;font-size:1.1rem;margin-bottom:.5rem;">Reservas al Instante</h5>
+                        <p class="fp-text-sm" style="color:var(--fp-text-secondary);">Olvídate de las llamadas telefónicas. Agenda tu partido en segundos.</p>
+                    </div>
 
-                <div class="fp-card fp-card-padded fp-text-center">
-                    <i class="pi pi-shield" style="font-size:2.5rem;color:var(--fp-primary-text);margin-bottom:.75rem;display:block;"></i>
-                    <h5 style="font-family:'DM Sans',sans-serif;font-weight:700;font-size:1.1rem;margin-bottom:.5rem;">Soporte de Confianza</h5>
-                    <p class="fp-text-sm" style="color:var(--fp-text-secondary);">Respaldo directo de administradores y complejos verificados en Loja.</p>
-                </div>
+                    <div class="fp-card fp-card-padded fp-text-center">
+                        <i class="pi pi-shield" style="font-size:2.5rem;color:var(--fp-primary-text);margin-bottom:.75rem;display:block;"></i>
+                        <h5 style="font-family:'DM Sans',sans-serif;font-weight:700;font-size:1.1rem;margin-bottom:.5rem;">Soporte de Confianza</h5>
+                        <p class="fp-text-sm" style="color:var(--fp-text-secondary);">Respaldo directo de administradores y complejos verificados en Loja.</p>
+                    </div>
 
-                <div class="fp-card fp-card-padded fp-text-center">
-                    <i class="pi pi-map-marker" style="font-size:2.5rem;color:var(--fp-primary-text);margin-bottom:.75rem;display:block;"></i>
-                    <h5 style="font-family:'DM Sans',sans-serif;font-weight:700;font-size:1.1rem;margin-bottom:.5rem;">Cerca de Ti</h5>
-                    <p class="fp-text-sm" style="color:var(--fp-text-secondary);">Encuentra canchas en cualquier zona de Loja, a minutos de tu ubicación.</p>
+                    <div class="fp-card fp-card-padded fp-text-center">
+                        <i class="pi pi-map-marker" style="font-size:2.5rem;color:var(--fp-primary-text);margin-bottom:.75rem;display:block;"></i>
+                        <h5 style="font-family:'DM Sans',sans-serif;font-weight:700;font-size:1.1rem;margin-bottom:.5rem;">Cerca de Ti</h5>
+                        <p class="fp-text-sm" style="color:var(--fp-text-secondary);">Encuentra canchas en cualquier zona de Loja, a minutos de tu ubicación.</p>
+                    </div>
                 </div>
             </div>
         </div>
