@@ -28,7 +28,11 @@ import java.util.Objects;
 
         // Consulta para buscar un usuario por su correo único.
         @NamedQuery(name = "User.findByEmail",
-                query = "SELECT u FROM User u WHERE u.email = :email")
+                query = "SELECT u FROM User u WHERE u.email = :email"),
+
+        //Consulta para buscar un usuario por su nombre.
+        @NamedQuery( name = "User.findLikeName",
+                query = "SELECT u FROM User u WHERE u.name LIKE :name")
 })
 public class User implements Serializable {
 
