@@ -5,7 +5,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import unl.edu.ec.fieldPal.domain.User;
 import unl.edu.ec.fieldPal.domain.enums.UserRole;
-import unl.edu.ec.fieldPal.business.service.UserService;
+import unl.edu.ec.fieldPal.business.repository.UserRepository;
 import unl.edu.ec.fieldPal.exception.AlreadyEntityException;
 import unl.edu.ec.fieldPal.exception.CredentialInvalidException;
 import unl.edu.ec.fieldPal.exception.EncryptorException;
@@ -30,7 +30,7 @@ public class AuthBean implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Inject
-    private UserService userService;
+    private UserRepository userRepository;
 
     private static final Logger logger = Logger.getLogger(AuthBean.class.getName());
 
@@ -87,7 +87,7 @@ public class AuthBean implements Serializable {
         }
 
         try {
-            User user = userService.authenticate(loginEmail, loginPassword);
+            User user = userRepository.authenticate(loginEmail, loginPassword);
             loginSuccess(user, "¡Bienvenido, " + user.getName() + "!");
             clearLoginForm();
             return "/homepage.xhtml?faces-redirect=true";
@@ -127,7 +127,7 @@ public class AuthBean implements Serializable {
         UserRole role = "ADMIN".equals(registerRole) ? UserRole.ADMIN : UserRole.PLAYER;
 
         try {
-            User user = userService.register(registerName, registerEmail,
+            User user = userRepository.register(registerName, registerEmail,
                     registerPhone, registerPassword, role);
             loginSuccess(user, "Cuenta creada exitosamente. ¡Bienvenido, " + user.getName() + "!");
             clearRegisterForm();

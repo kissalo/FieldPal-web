@@ -9,9 +9,9 @@ import unl.edu.ec.fieldPal.domain.Court;
 import unl.edu.ec.fieldPal.domain.enums.Zone;
 import unl.edu.ec.fieldPal.domain.enums.CourtType;
 import unl.edu.ec.fieldPal.domain.User;
-import unl.edu.ec.fieldPal.business.service.OrganizationService;
-import unl.edu.ec.fieldPal.business.service.CourtService;
-import unl.edu.ec.fieldPal.business.service.UserService;
+import unl.edu.ec.fieldPal.business.repository.OrganizationRepository;
+import unl.edu.ec.fieldPal.business.repository.CourtRepository;
+import unl.edu.ec.fieldPal.business.repository.UserRepository;
 import unl.edu.ec.fieldPal.faces.FacesUtil;
 
 import java.io.Serial;
@@ -33,13 +33,13 @@ public class WizardBean implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Inject
-    private OrganizationService organizationService;
+    private OrganizationRepository organizationRepository;
 
     @Inject
-    private CourtService courtService;
+    private CourtRepository courtRepository;
 
     @Inject
-    private UserService userService;
+    private UserRepository userRepository;
 
     @Inject
     private AuthBean authBean;
@@ -60,13 +60,13 @@ public class WizardBean implements Serializable {
     public void init() {
         Long existingOrgId = authBean.getOrganizationId();
         if (existingOrgId != null) {
-            Organization existing = organizationService.findById(existingOrgId);
+            Organization existing = organizationRepository.findById(existingOrgId);
             if (existing != null) {
                 newOrganization = existing;
                 editMode = true;
                 // Precargar las canchas que ya había registrado para este complejo
                 tempCourts = new ArrayList<>();
-                for (Court c : courtService.getAll()) {
+                for (Court c : courtRepository.getAll()) {
                     if (existingOrgId.equals(c.getOrgId())) {
                         tempCourts.add(c);
                     }
@@ -213,7 +213,7 @@ public class WizardBean implements Serializable {
             }
 
             // 1. Guardar Organización
-            organizationService.save(newOrganization);
+            organizationRepository.save(newOrganization);
 
             authBean.setOrganizationId(newOrganization.getId());
 
@@ -223,13 +223,13 @@ public class WizardBean implements Serializable {
             User currentUser = authBean.getCurrentUser();
             if (currentUser != null) {
                 currentUser.setOrganizationId(newOrganization.getId());
-                userService.updateUser(currentUser, currentUser.getPassword());
+                userRepository.updateUser(currentUser, currentUser.getPassword());
             }
 
             // 2. Asociar y guardar canchas
             for (Court court : tempCourts) {
                 court.setOrganizationId(newOrganization.getId());
-                courtService.save(court);
+                courtRepository.save(court);
             }
 
             // Hay faces-redirect=true hacia gestion.xhtml -> usamos "AndKeep",

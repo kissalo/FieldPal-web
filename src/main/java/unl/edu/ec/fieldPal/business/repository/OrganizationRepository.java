@@ -1,52 +1,63 @@
 package unl.edu.ec.fieldPal.business.repository;
 
-import jakarta.ejb.Stateless;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.persistence.EntityNotFoundException;
 import unl.edu.ec.fieldPal.domain.Organization;
 import unl.edu.ec.fieldPal.domain.enums.Zone;
-import unl.edu.ec.fieldPal.business.genericService.CrudGenericService;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-@Stateless
+@Named
+@ApplicationScoped
 public class OrganizationRepository {
 
     @Inject
-    private CrudGenericService crud;
+    private unl.edu.ec.fieldPal.business.service.OrganizationService organizationService;
 
-    public Organization save(Organization org) {
-        if (org.getId() == null || crud.find(Organization.class, org.getId()) == null) {
-            return crud.create(org);
+    public OrganizationRepository() {
+    }
+
+    public List<Organization> getAll() {
+        return organizationService.findAll();
+    }
+
+    public List<Organization> getByZone(Zone zone) {
+        if (zone == null) return getAll();
+        return organizationService.findByZone(zone);
+    }
+
+    public Organization findById(Long id) throws EntityNotFoundException {
+        Organization organization = organizationService.findById(id);
+        if (organization == null){
+            throw new EntityNotFoundException("Organization no encontrada con [" + id + "]");
         }
-        return crud.update(org);
+        return organization;
     }
 
-    public Organization findById(Long id) {
-        if (id == null) return null;
-        return crud.find(Organization.class, id);
+    public Organization save(Organization organization) {
+        if (organization == null) return null;
+        return organizationService.save(organization);
     }
 
-    public List<Organization> findAll() {
-        return crud.findWithQuery("SELECT o FROM Organization o");
+    public void addOrganization(Organization org) {
+        if (org == null) return;
+        organizationService.save(org);
     }
 
-    public List<Organization> findByZone(Zone zone) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("zone", zone);
-        return crud.findWithQuery("SELECT o FROM Organization o WHERE o.zone = :zone", params);
+    public void updateOrganization(Organization org) {
+        if (org == null || org.getId() == null) return;
+        organizationService.save(org);
     }
 
-    public List<Zone> findDistinctZones() {
-        return crud.findWithQuery("SELECT DISTINCT o.zone FROM Organization o");
+    public void removeOrganization(Organization org) {
+        if (org == null || org.getId() == null) return;
+        organizationService.deleteById(org.getId());
     }
 
-    public void deleteById(Long id) {
-        crud.delete(Organization.class, id);
-    }
-
-    public long count() {
-        return crud.count("SELECT COUNT(o) FROM Organization o");
+    public List<Zone> getAvailableZones() {
+        return organizationService.findDistinctZones();
     }
 }
+

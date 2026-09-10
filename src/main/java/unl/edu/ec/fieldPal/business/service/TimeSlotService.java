@@ -1,4 +1,4 @@
-package unl.edu.ec.fieldPal.business.repository;
+package unl.edu.ec.fieldPal.business.service;
 
 import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 @Stateless
-public class TimeSlotRepository {
+public class TimeSlotService {
 
     @Inject
     private CrudGenericService crud;

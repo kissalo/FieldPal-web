@@ -5,12 +5,12 @@ import unl.edu.ec.fieldPal.domain.Court;
 import unl.edu.ec.fieldPal.domain.Reservation;
 import unl.edu.ec.fieldPal.domain.TimeSlot;
 import unl.edu.ec.fieldPal.domain.enums.ReservationStatus;
-import unl.edu.ec.fieldPal.business.service.CourtService;
-import unl.edu.ec.fieldPal.business.service.ReservationService;
+import unl.edu.ec.fieldPal.business.repository.CourtRepository;
+import unl.edu.ec.fieldPal.business.repository.ReservationRepository;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import unl.edu.ec.fieldPal.business.service.ScheduleService;
+import unl.edu.ec.fieldPal.business.repository.ScheduleRepository;
 import unl.edu.ec.fieldPal.faces.FacesUtil;
 
 import java.io.Serial;
@@ -34,13 +34,13 @@ public class ReservaBean implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Inject
-    private CourtService courtService;
+    private CourtRepository courtRepository;
 
     @Inject
-    private ReservationService reservationService;
+    private ReservationRepository reservationRepository;
 
     @Inject
-    private ScheduleService scheduleService;
+    private ScheduleRepository scheduleRepository;
 
     @Inject
     private AuthBean authBean;
@@ -69,7 +69,7 @@ public class ReservaBean implements Serializable {
 
     public Court getActiveCourt() {
         if (selectedCourtId != null) {
-            return courtService.findById(selectedCourtId);
+            return courtRepository.findById(selectedCourtId);
         }
         return null;
     }
@@ -89,7 +89,7 @@ public class ReservaBean implements Serializable {
         if (selectedCourtId == null || date == null) {
             return List.of();
         }
-        return scheduleService.getSchedule(selectedCourtId, date).stream()
+        return scheduleRepository.getSchedule(selectedCourtId, date).stream()
                 .filter(TimeSlot::isAvailable)
                 .map(TimeSlot::getHour)
                 .filter(java.util.Objects::nonNull)
@@ -100,7 +100,7 @@ public class ReservaBean implements Serializable {
         if (selectedCourtId == null || date == null) {
             return List.of();
         }
-        return scheduleService.getSchedule(selectedCourtId, date);
+        return scheduleRepository.getSchedule(selectedCourtId, date);
     }
 
     public void onDateOrCourtChange() {
@@ -158,8 +158,8 @@ public class ReservaBean implements Serializable {
         res.setContactName(contactName);
         res.setContactPhone(contactPhone);
 
-        reservationService.addReservation(res);
-        scheduleService.reserve(selectedCourtId, date, hour);
+        reservationRepository.addReservation(res);
+        scheduleRepository.reserve(selectedCourtId, date, hour);
         submitted = true;
 
         // Hay faces-redirect=true hacia mis-reservas.xhtml -> "AndKeep"

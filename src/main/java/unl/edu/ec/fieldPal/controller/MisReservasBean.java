@@ -1,11 +1,11 @@
 package unl.edu.ec.fieldPal.controller;
 
+import unl.edu.ec.fieldPal.business.repository.ReservationRepository;
 import unl.edu.ec.fieldPal.domain.Court;
 import unl.edu.ec.fieldPal.domain.Organization;
 import unl.edu.ec.fieldPal.domain.Reservation;
-import unl.edu.ec.fieldPal.business.service.CourtService;
-import unl.edu.ec.fieldPal.business.service.OrganizationService;
-import unl.edu.ec.fieldPal.business.service.ReservationService;
+import unl.edu.ec.fieldPal.business.repository.CourtRepository;
+import unl.edu.ec.fieldPal.business.repository.OrganizationRepository;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -28,13 +28,13 @@ public class MisReservasBean implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Inject
-    private ReservationService reservationService;
+    private ReservationRepository reservationRepository;
 
     @Inject
-    private CourtService courtService;
+    private CourtRepository courtRepository;
 
     @Inject
-    private OrganizationService organizationService;
+    private OrganizationRepository organizationRepository;
 
     @Inject
     private AuthBean authBean;
@@ -51,7 +51,7 @@ public class MisReservasBean implements Serializable {
         if (!authBean.isAuthenticated() || authBean.getCurrentUser().getId() == null) return List.of();
 
         Long userId = authBean.getCurrentUser().getId();
-        List<Reservation> all = reservationService.getByUser(userId);
+        List<Reservation> all = reservationRepository.getByUser(userId);
 
         return all.stream()
                 .filter(r -> {
@@ -66,18 +66,18 @@ public class MisReservasBean implements Serializable {
     }
 
     public String getCourtName(Long courtId) {
-        Court court = courtService.findById(courtId);
+        Court court = courtRepository.findById(courtId);
         return court != null ? court.getName() : "—";
     }
 
     public String getOrgName(Long orgId) {
-        Organization org = organizationService.findById(orgId);
+        Organization org = organizationRepository.findById(orgId);
         return org != null ? org.getName() : "—";
     }
 
     /** Ícono Material Symbols asociado al tipo de cancha (para la tabla/modal). */
     public String getCourtIcon(Long courtId) {
-        Court court = courtService.findById(courtId);
+        Court court = courtRepository.findById(courtId);
         return court != null && court.getType() != null ? court.getType().getIcon() : "sports_soccer";
     }
 
@@ -97,13 +97,13 @@ public class MisReservasBean implements Serializable {
 
     public void cancelReservation(Long reservationId) {
         if (reservationId == null) return;
-        reservationService.cancelReservation(reservationId);
+        reservationRepository.cancelReservation(reservationId);
         FacesUtil.addSuccessMessage("Reserva cancelada exitosamente.");
     }
 
     public void confirmAttendance(Long reservationId) {
         if (reservationId == null) return;
-        reservationService.confirmReservation(reservationId);
+        reservationRepository.confirmReservation(reservationId);
         FacesUtil.addSuccessMessage("Asistencia confirmada.");
     }
 
@@ -122,7 +122,7 @@ public class MisReservasBean implements Serializable {
     /** Guarda los cambios hechos sobre la reserva seleccionada (solo aplica si está UPCOMING). */
     public void saveEditedReservation() {
         if (selectedReservation == null) return;
-        reservationService.updateReservation(selectedReservation);
+        reservationRepository.updateReservation(selectedReservation);
         showEditModal = false;
         FacesUtil.addSuccessMessage("Reserva actualizada correctamente.");
     }

@@ -2,7 +2,7 @@ package unl.edu.ec.fieldPal.controller;
 
 import unl.edu.ec.fieldPal.domain.Organization;
 import unl.edu.ec.fieldPal.domain.enums.Zone;
-import unl.edu.ec.fieldPal.business.service.OrganizationService;
+import unl.edu.ec.fieldPal.business.repository.OrganizationRepository;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -23,7 +23,7 @@ public class HomeBean implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Inject
-    private OrganizationService organizationService;
+    private OrganizationRepository organizationRepository;
 
     // Filtro de zona seleccionada
     private Zone selectedZone;
@@ -36,13 +36,13 @@ public class HomeBean implements Serializable {
 
     public List<Organization> getOrganizations() {
         if (selectedZone != null) {
-            return organizationService.getByZone(selectedZone);
+            return organizationRepository.getByZone(selectedZone);
         }
-        return organizationService.getAll();
+        return organizationRepository.getAll();
     }
 
     public List<Zone> getAvailableZones() {
-        return organizationService.getAvailableZones();
+        return organizationRepository.getAvailableZones();
     }
 
     public void filterByZone(Zone zone) {

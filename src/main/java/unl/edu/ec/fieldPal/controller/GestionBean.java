@@ -6,13 +6,11 @@ import unl.edu.ec.fieldPal.domain.Reservation;
 import unl.edu.ec.fieldPal.domain.enums.CourtType;
 import unl.edu.ec.fieldPal.domain.enums.ReservationStatus;
 import unl.edu.ec.fieldPal.domain.enums.Zone;
-import unl.edu.ec.fieldPal.business.service.CourtService;
-import unl.edu.ec.fieldPal.business.service.OrganizationService;
-import unl.edu.ec.fieldPal.business.service.ReservationService;
-import unl.edu.ec.fieldPal.business.service.UserService;
+import unl.edu.ec.fieldPal.business.repository.CourtRepository;
+import unl.edu.ec.fieldPal.business.repository.OrganizationRepository;
+import unl.edu.ec.fieldPal.business.repository.ReservationRepository;
+import unl.edu.ec.fieldPal.business.repository.UserRepository;
 
-import jakarta.faces.application.FacesMessage;
-import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -35,16 +33,16 @@ public class GestionBean implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Inject
-    private OrganizationService organizationService;
+    private OrganizationRepository organizationRepository;
 
     @Inject
-    private CourtService courtService;
+    private CourtRepository courtRepository;
 
     @Inject
-    private ReservationService reservationService;
+    private ReservationRepository reservationRepository;
 
     @Inject
-    private UserService userService;
+    private UserRepository userRepository;
 
     @Inject
     private AuthBean authBean;
@@ -98,7 +96,7 @@ public class GestionBean implements Serializable {
                 .count();
     }
 
-    public int getUsuarios() { return userService.getUserCount(); }
+    public int getUsuarios() { return userRepository.getUserCount(); }
 
     public double getIngresosMes() {
         return getAllReservations().stream()
@@ -125,7 +123,7 @@ public class GestionBean implements Serializable {
         org.setRating(4.5);
         org.setLatitude(newOrgLatitude);
         org.setLongitude(newOrgLongitude);
-        organizationService.addOrganization(org);
+        organizationRepository.addOrganization(org);
 
         clearOrgForm();
         FacesUtil.addSuccessMessage("Organización registrada exitosamente.");
@@ -139,7 +137,7 @@ public class GestionBean implements Serializable {
 
     public String doUpdateOrganization() {
         if (editingOrg != null) {
-            organizationService.updateOrganization(editingOrg);
+            organizationRepository.updateOrganization(editingOrg);
             showEditOrgModal = false;
             editingOrg = null;
             FacesUtil.addSuccessMessage("Organización actualizada.");
@@ -148,14 +146,14 @@ public class GestionBean implements Serializable {
     }
 
     public void removeOrganization(Organization org) {
-        organizationService.removeOrganization(org);
+        organizationRepository.removeOrganization(org);
         FacesUtil.addSuccessMessage("Organización eliminada.");
     }
 
     // === Canchas ===
     // Se filtra por la organización del admin logueado.
     public List<Court> getAllCourts() {
-        return courtService.getByOrg(authBean.getOrganizationId());
+        return courtRepository.getByOrg(authBean.getOrganizationId());
     }
 
     public String doAddCourt() {
@@ -172,7 +170,7 @@ public class GestionBean implements Serializable {
         court.setSurface(newCourtSurface);
         court.setHasLighting(newCourtLighting);
         court.setCovered(newCourtCovered);
-        courtService.addCourt(court);
+        courtRepository.addCourt(court);
 
         clearCourtForm();
         FacesUtil.addSuccessMessage("Cancha registrada exitosamente.");
@@ -186,7 +184,7 @@ public class GestionBean implements Serializable {
 
     public String doUpdateCourt() {
         if (editingCourt != null) {
-            courtService.updateCourt(editingCourt);
+            courtRepository.updateCourt(editingCourt);
             showEditCourtModal = false;
             editingCourt = null;
             FacesUtil.addSuccessMessage("Cancha actualizada.");
@@ -195,7 +193,7 @@ public class GestionBean implements Serializable {
     }
 
     public void removeCourt(Long courtId) {
-        courtService.removeCourt(courtId);
+        courtRepository.removeCourt(courtId);
         FacesUtil.addSuccessMessage("Cancha eliminada.");
     }
 
@@ -203,7 +201,7 @@ public class GestionBean implements Serializable {
     // Antes: reservationService.getAll() devolvía TODAS las reservas del sistema,
     // incluyendo las del admin predefinido y las de cualquier otra organización.
     public List<Reservation> getAllReservations() {
-        List<Reservation> all = reservationService.getByOrg(authBean.getOrganizationId());
+        List<Reservation> all = reservationRepository.getByOrg(authBean.getOrganizationId());
         if (search == null || search.isEmpty()) return all;
         String lowerSearch = search.toLowerCase();
         return all.stream()
@@ -214,23 +212,23 @@ public class GestionBean implements Serializable {
     }
 
     public void cancelReservation(Long reservationId) {
-        reservationService.cancelReservation(reservationId);
+        reservationRepository.cancelReservation(reservationId);
         FacesUtil.addSuccessMessage("Reserva cancelada.");
     }
 
     // === Helpers ===
     public String getCourtName(Long courtId) {
-        Court c = courtService.findById(courtId);
+        Court c = courtRepository.findById(courtId);
         return c != null ? c.getName() : "—";
     }
 
     public String getOrgName(Long orgId) {
-        Organization o = organizationService.findById(orgId);
+        Organization o = organizationRepository.findById(orgId);
         return o != null ? o.getName() : "—";
     }
 
     public String getOrgZoneName(Long orgId) {
-        Organization o = organizationService.findById(orgId);
+        Organization o = organizationRepository.findById(orgId);
         return o != null && o.getZone() != null ? o.getZone().getLabel() : "—";
     }
 
@@ -238,7 +236,7 @@ public class GestionBean implements Serializable {
     public Organization getMyOrganization() {
         Long orgId = authBean.getOrganizationId();
         if (orgId == null) return null;
-        return organizationService.findById(orgId);
+        return organizationRepository.findById(orgId);
     }
 
     // === Limpiar formularios ===

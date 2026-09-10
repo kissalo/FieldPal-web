@@ -1,60 +1,80 @@
 package unl.edu.ec.fieldPal.business.repository;
 
-import jakarta.ejb.Stateless;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.persistence.EntityNotFoundException;
 import unl.edu.ec.fieldPal.domain.Reservation;
 import unl.edu.ec.fieldPal.domain.enums.ReservationStatus;
-import unl.edu.ec.fieldPal.business.genericService.CrudGenericService;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-@Stateless
+@Named
+@ApplicationScoped
 public class ReservationRepository {
 
     @Inject
-    private CrudGenericService crud;
+    private unl.edu.ec.fieldPal.business.service.ReservationService reservationService;
 
-    public Reservation save(Reservation reservation) {
-        if (reservation.getId() == null || crud.find(Reservation.class, reservation.getId()) == null) {
-            return crud.create(reservation);
-        }
-        return crud.update(reservation);
+    public ReservationRepository() {
     }
 
-    public Reservation findById(Long id) {
+    public List<Reservation> getAll() {
+        return reservationService.findAll();
+    }
+
+    public List<Reservation> getByUser(Long userId) {
+        if (userId == null) return new ArrayList<>();
+        return reservationService.findByUser(userId);
+    }
+
+    public List<Reservation> getByOrg(Long orgId) {
+        if (orgId == null) return new ArrayList<>();
+        return reservationService.findByOrg(orgId);
+    }
+
+    public Reservation findById(Long id) throws EntityNotFoundException {
         if (id == null) return null;
-        return crud.find(Reservation.class, id);
+        Reservation reservation = reservationService.findById(id);
+        if (reservation == null) {
+            throw new EntityNotFoundException("Reserva no encontrada con ID [" + id + "]");
+        }
+        return reservation;
     }
 
-    public List<Reservation> findAll() {
-        return crud.findWithQuery("SELECT r FROM Reservation r");
+    public void addReservation(Reservation res) {
+        if (res == null) return;
+        reservationService.save(res);
     }
 
-    public List<Reservation> findByUser(Long userId) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("userId", userId);
-        return crud.findWithQuery("SELECT r FROM Reservation r WHERE r.user.id = :userId", params);
+    public void cancelReservation(Long id) {
+        Reservation res = findById(id);
+        if (res != null) {
+            res.setStatus(ReservationStatus.CANCELLED);
+            reservationService.save(res);
+        }
     }
 
-    public List<Reservation> findByOrg(Long orgId) {
-        if (orgId == null) return List.of();
-        Map<String, Object> params = new HashMap<>();
-        params.put("orgId", orgId);
-        return crud.findWithQuery("SELECT r FROM Reservation r WHERE r.organization.id = :orgId", params);
+    public void confirmReservation(Long id) {
+        Reservation res = findById(id);
+        if (res != null) {
+            res.setConfirmed(true);
+            reservationService.save(res);
+        }
     }
 
-    public long countByStatus(ReservationStatus status) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("status", status);
-        return crud.count("SELECT COUNT(r) FROM Reservation r WHERE r.status = :status", params);
+    public void updateReservation(Reservation reservation) {
+        if (reservation == null || reservation.getId() == null) return;
+        reservationService.save(reservation);
     }
 
-    public double sumTotalPriceExcluding(ReservationStatus excludedStatus) {
-        return findAll().stream()
-                .filter(r -> r.getStatus() != excludedStatus)
-                .mapToDouble(Reservation::getTotalPrice)
-                .sum();
+    public int getActiveCount() {
+        return (int) reservationService.countByStatus(ReservationStatus.UPCOMING);
     }
+
+    public double getMonthlyIncome() {
+        return reservationService.sumTotalPriceExcluding(ReservationStatus.CANCELLED);
+    }
+
 }

@@ -10,7 +10,7 @@ import jakarta.inject.Named;
 import java.io.Serial;
 import java.io.Serializable;
 import unl.edu.ec.fieldPal.domain.User;
-import unl.edu.ec.fieldPal.business.service.UserService;
+import unl.edu.ec.fieldPal.business.repository.UserRepository;
 import unl.edu.ec.fieldPal.faces.FacesUtil;
 
 /**
@@ -21,7 +21,7 @@ import unl.edu.ec.fieldPal.faces.FacesUtil;
 @ViewScoped
 public class ProfileBean implements Serializable {
     @Inject private AuthBean authBean;
-    @Inject private UserService userService;
+    @Inject private UserRepository userRepository;
     private User editingUser;
     private String newPassword;
     private String confirmPassword;
@@ -58,7 +58,7 @@ public class ProfileBean implements Serializable {
             }
 
             // Persistencia en el servicio
-            userService.updateUser(editingUser, newPassword);
+            userRepository.updateUser(editingUser, newPassword);
 
             // Sincronizar sesión actual para actualizar el Header
             authBean.setCurrentUser(editingUser);

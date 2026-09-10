@@ -1,12 +1,12 @@
-package unl.edu.ec.fieldPal.business.service;
+package unl.edu.ec.fieldPal.business.repository;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import unl.edu.ec.fieldPal.domain.Court;
 import unl.edu.ec.fieldPal.domain.TimeSlot;
-import unl.edu.ec.fieldPal.business.repository.CourtRepository;
-import unl.edu.ec.fieldPal.business.repository.TimeSlotRepository;
+import unl.edu.ec.fieldPal.business.service.CourtService;
+import unl.edu.ec.fieldPal.business.service.TimeSlotService;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -15,22 +15,22 @@ import java.util.List;
 
 @Named
 @ApplicationScoped
-public class ScheduleService {
+public class ScheduleRepository {
 
     @Inject
-    private TimeSlotRepository timeSlotRepository;
+    private TimeSlotService timeSlotService;
 
     @Inject
-    private CourtRepository courtRepository;
+    private CourtService courtService;
 
-    public ScheduleService() {
+    public ScheduleRepository() {
     }
 
     public List<TimeSlot> getSchedule(Long courtId, LocalDate date) {
         if (courtId == null || date == null) return new ArrayList<>();
 
-        Court court = courtRepository.findById(courtId);
-        List<LocalTime> reservedHours = timeSlotRepository.findReservedHours(courtId, date);
+        Court court = courtService.findById(courtId);
+        List<LocalTime> reservedHours = timeSlotService.findReservedHours(courtId, date);
 
         List<TimeSlot> slots = new ArrayList<>();
         for (int h = 8; h <= 22; h++) {
@@ -55,9 +55,9 @@ public class ScheduleService {
     }
 
     public TimeSlot reserve(Long courtId, LocalDate date, LocalTime hour) {
-        Court court = courtRepository.findById(courtId);
+        Court court = courtService.findById(courtId);
         TimeSlot slot = new TimeSlot(court, date, hour, false);
-        return timeSlotRepository.save(slot);
+        return timeSlotService.save(slot);
     }
 
     public TimeSlot reserve(String courtIdStr, String dateStr, String hourStr) {

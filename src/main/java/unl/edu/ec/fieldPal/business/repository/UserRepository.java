@@ -1,67 +1,73 @@
 package unl.edu.ec.fieldPal.business.repository;
 
-import jakarta.ejb.Stateless;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import unl.edu.ec.fieldPal.domain.User;
+import unl.edu.ec.fieldPal.domain.enums.UserRole;
+import unl.edu.ec.fieldPal.exception.AlreadyEntityException;
+import unl.edu.ec.fieldPal.exception.CredentialInvalidException;
+import unl.edu.ec.fieldPal.exception.EncryptorException;
 import unl.edu.ec.fieldPal.exception.EntityNotFoundException;
-import unl.edu.ec.fieldPal.business.genericService.CrudGenericService;
+import unl.edu.ec.fieldPal.util.security.EncryptorManager;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-@Stateless
+@Named
+@ApplicationScoped
 public class UserRepository {
 
     @Inject
-    private CrudGenericService crud;
+    private unl.edu.ec.fieldPal.business.service.UserService userService;
 
-    public User save(User user) {
-        if (user.getId() == null || crud.find(User.class, user.getId()) == null) {
-            return crud.create(user);
+    public UserRepository() {
+    }
+
+    public User authenticate(String email, String password)
+            throws CredentialInvalidException {
+        try {
+            User userFound = userService.findByEmail(email);
+            String pwdEncrypted = EncryptorManager.encrypt(password);
+            if (userFound.getPassword().equals(pwdEncrypted)) {
+                return userFound;
+            }
+            throw new CredentialInvalidException();
+        } catch (EncryptorException e) {
+            throw new CredentialInvalidException("Credenciales incorrectas", e);
         }
-        return crud.update(user);
     }
 
-    public User findById(Long id) {
-        if (id == null) return null;
-        return crud.find(User.class, id);
-    }
-
-    public User findByEmail(String email) {
+    public User register(String name, String email, String phone, String password, UserRole role) throws EncryptorException, AlreadyEntityException {
         if (email == null) return null;
-        Map<String, Object> params = new HashMap<>();
-        params.put("email", email);
-        return crud.findSingleResultOrNull(
-                "SELECT u FROM User u WHERE LOWER(u.email) = LOWER(:email)", User.class, params);
-    }
+        User user = new User(null, name, email, phone, password, role);
 
-    /**
-     * Login vía la named query "User.login" (email + password), tal como
-     * antes se invocaba directamente desde UserService con CrudGenericService.
-     */
-    public User login(String email, String password) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("email", email);
-        params.put("password", password);
-        return crud.findSingleResultOrNullWithNamedQuery("User.login", params);
-    }
-
-    public User find(String name) throws EntityNotFoundException {
-        Map<String, Object> params = new HashMap<>();
-        params.put("name", name);
-        User userFound = crud.findSingleResultOrNullWithNamedQuery("User.findLikeName", params);
-        if (userFound == null) {
-            throw new EntityNotFoundException("User no encontrado con [" + name + "]");
+        String pwdEncrypted = EncryptorManager.encrypt(user.getPassword());
+        user.setPassword(pwdEncrypted);
+        // Regla Negocio => El nombre de usuario debe ser unico
+        try {
+            User userFound = userService.find(user.getName());
+        } catch (EntityNotFoundException e) {
+            return userService.save(user);
         }
-        return userFound;
+        throw new AlreadyEntityException("Ya existe otro usuario con ese nombre");
     }
 
-    public List<User> findAll() {
-        return crud.findWithQuery("SELECT u FROM User u");
+    public void updateUser(User user, String rawNewPassword) throws EncryptorException, AlreadyEntityException {
+        if (rawNewPassword != null && !rawNewPassword.isEmpty()) {
+            String pwdEncrypted = EncryptorManager.encrypt(rawNewPassword);
+            user.setPassword(pwdEncrypted);
+        }
+        // Regla Negocio => El nombre de usuario debe ser único
+        try {
+            User userFound = userService.find(user.getName());
+            if (!userFound.getId().equals(user.getId())) {
+                throw new AlreadyEntityException("Ya existe otro usuario con ese nombre");
+            }
+        } catch (EntityNotFoundException e) {
+            // No hay conflicto, se puede continuar
+        }
+        userService.save(user);
     }
 
-    public long count() {
-        return crud.count("SELECT COUNT(u) FROM User u");
+    public int getUserCount() {
+        return (int) userService.count();
     }
 }

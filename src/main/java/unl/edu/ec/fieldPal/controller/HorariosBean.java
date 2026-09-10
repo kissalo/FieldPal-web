@@ -4,14 +4,14 @@ import unl.edu.ec.fieldPal.domain.Court;
 import unl.edu.ec.fieldPal.domain.Organization;
 import unl.edu.ec.fieldPal.domain.TimeSlot;
 import unl.edu.ec.fieldPal.domain.enums.Zone;
-import unl.edu.ec.fieldPal.business.service.CourtService;
-import unl.edu.ec.fieldPal.business.service.OrganizationService;
+import unl.edu.ec.fieldPal.business.repository.CourtRepository;
+import unl.edu.ec.fieldPal.business.repository.OrganizationRepository;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import unl.edu.ec.fieldPal.business.service.ScheduleService;
+import unl.edu.ec.fieldPal.business.repository.ScheduleRepository;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -30,13 +30,13 @@ public class HorariosBean implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Inject
-    private OrganizationService organizationService;
+    private OrganizationRepository organizationRepository;
 
     @Inject
-    private CourtService courtService;
+    private CourtRepository courtRepository;
 
     @Inject
-    private ScheduleService scheduleService;
+    private ScheduleRepository scheduleRepository;
 
     // Filtros
     private Zone selectedZone;
@@ -46,7 +46,7 @@ public class HorariosBean implements Serializable {
 
     @PostConstruct
     public void init() {
-        List<Organization> orgs = organizationService.getAll();
+        List<Organization> orgs = organizationRepository.getAll();
         if (!orgs.isEmpty() && orgs.get(0).getId() != null) {
             selectOrganization(orgs.get(0).getId());
         }
@@ -54,28 +54,28 @@ public class HorariosBean implements Serializable {
 
     public List<Organization> getFilteredOrgs() {
         if (selectedZone != null) {
-            return organizationService.getByZone(selectedZone);
+            return organizationRepository.getByZone(selectedZone);
         }
-        return organizationService.getAll();
+        return organizationRepository.getAll();
     }
 
     public List<Zone> getAvailableZones() {
-        return organizationService.getAvailableZones();
+        return organizationRepository.getAvailableZones();
     }
 
     public List<Court> getCourtsForSelectedOrg() {
         if (selectedOrgId == null) return List.of();
-        return courtService.getByOrg(selectedOrgId);
+        return courtRepository.getByOrg(selectedOrgId);
     }
 
     public Court getActiveCourt() {
         if (selectedCourtId == null) return null;
-        return courtService.findById(selectedCourtId);
+        return courtRepository.findById(selectedCourtId);
     }
 
     public List<TimeSlot> getActiveSchedule() {
         if (selectedCourtId == null) return List.of();
-        return scheduleService.getSchedule(selectedCourtId, date);
+        return scheduleRepository.getSchedule(selectedCourtId, date);
     }
 
     public void filterByZone(Zone zone) {
@@ -90,7 +90,7 @@ public class HorariosBean implements Serializable {
 
     public void clearZoneFilter() {
         this.selectedZone = null;
-        List<Organization> orgs = organizationService.getAll();
+        List<Organization> orgs = organizationRepository.getAll();
         selectedOrgId = null;
         selectedCourtId = null;
         if (!orgs.isEmpty()) {
@@ -100,7 +100,7 @@ public class HorariosBean implements Serializable {
 
     public void selectOrganization(Long orgId) {
         this.selectedOrgId = orgId;
-        List<Court> courts = courtService.getByOrg(orgId);
+        List<Court> courts = courtRepository.getByOrg(orgId);
         this.selectedCourtId = courts.isEmpty() ? null : courts.get(0).getId();
     }
 
