@@ -12,8 +12,6 @@ import unl.edu.ec.fieldPal.exception.EncryptorException;
 import unl.edu.ec.fieldPal.exception.EntityNotFoundException;
 import unl.edu.ec.fieldPal.util.security.EncryptorManager;
 
-import java.util.List;
-
 @Named
 @ApplicationScoped
 public class UserService {
@@ -24,10 +22,10 @@ public class UserService {
     public UserService() {
     }
 
-    public User authenticate(String name, String password)
+    public User authenticate(String email, String password)
             throws CredentialInvalidException {
         try {
-            User userFound = userRepository.find(name);
+            User userFound = userRepository.findByEmail(email);
             String pwdEncrypted = EncryptorManager.encrypt(password);
             if (userFound.getPassword().equals(pwdEncrypted)) {
                 return userFound;
@@ -35,8 +33,6 @@ public class UserService {
             throw new CredentialInvalidException();
         } catch (EncryptorException e) {
             throw new CredentialInvalidException("Credenciales incorrectas", e);
-        } catch (EntityNotFoundException e) {
-            throw new CredentialInvalidException();
         }
     }
 
@@ -72,19 +68,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public User findUser(Long id) throws EntityNotFoundException {
-        User user = userRepository.findById(id);
-        if (user == null) {
-            throw new EntityNotFoundException("Usuario no encontrado con id: " + id);
-        }
-        return user;
-    }
-
     public int getUserCount() {
         return (int) userRepository.count();
-    }
-
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
     }
 }
