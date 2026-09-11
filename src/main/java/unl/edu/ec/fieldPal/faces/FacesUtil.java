@@ -32,12 +32,12 @@ public class FacesUtil {
 
     /** Mensaje de éxito solo con detalle (sin resumen). */
     public static void addSuccessMessage(String detail) {
-        addMessage(FacesMessage.SEVERITY_INFO, null, detail);
+        addMessage(FacesMessage.SEVERITY_INFO, "¡Éxito!", detail);
     }
 
     /** Mensaje de éxito solo con detalle, que sobrevive a un redirect. */
     public static void addSuccessMessageAndKeep(String detail) {
-        addMessageAndKeep(FacesMessage.SEVERITY_INFO, null, detail);
+        addMessageAndKeep(FacesMessage.SEVERITY_INFO, "¡Éxito!", detail);
     }
 
     // ---------------------------------------------------------------

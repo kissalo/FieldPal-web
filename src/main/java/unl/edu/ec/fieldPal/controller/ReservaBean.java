@@ -164,7 +164,8 @@ public class ReservaBean implements Serializable {
 
         // Hay faces-redirect=true hacia mis-reservas.xhtml -> "AndKeep"
         FacesUtil.addSuccessMessageAndKeep(
-                "¡Reserva confirmada! Cancha: " + court.getName() +
+                "¡Reserva confirmada! " +
+                        "Cancha: " + court.getName() +
                         " | Fecha: " + date + " " + hour);
 
         return "/mis-reservas.xhtml?faces-redirect=true";

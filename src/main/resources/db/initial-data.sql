@@ -2,8 +2,8 @@
 -- ============================================
 -- NOTA: ORG_ID de este admin se completa con el UPDATE de más abajo (después de
 -- crear la fila 1 de ORGANIZATIONS), para no romper la referencia de llave foránea.
-INSERT INTO USERS (ID, NAME, EMAIL, PHONE, PASSWORD, ROLE, ACTIVE) VALUES (1, 'Admin FieldPal', 'admin@fieldpal.com', '+593990000001', 'j1c37tPLfzwORcP3Fzb2Ig==', 'ADMIN', true);
-INSERT INTO USERS (ID, NAME, EMAIL, PHONE, PASSWORD, ROLE, ACTIVE) VALUES (2, 'Carlos Mendoza', 'jugador@fieldpal.com', '+593991234567', '22uXWwCx4jyGvRCQMdQz4w==', 'PLAYER', true);
+INSERT INTO USERS (ID, NAME, EMAIL, PHONE, PASSWORD, ROLE, ACTIVE) VALUES (1, 'Admin FieldPal', 'admin@fieldpal.com', '0990000001', 'j1c37tPLfzwORcP3Fzb2Ig==', 'ADMIN', true);
+INSERT INTO USERS (ID, NAME, EMAIL, PHONE, PASSWORD, ROLE, ACTIVE) VALUES (2, 'Carlos Mendoza', 'jugador@fieldpal.com', '0991234567', '22uXWwCx4jyGvRCQMdQz4w==', 'PLAYER', true);
 
 -- ORGANIZACIONES (complejos deportivos)
 -- ============================================
